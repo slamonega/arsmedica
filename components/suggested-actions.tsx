@@ -12,7 +12,11 @@ interface SuggestedActionsProps {
 
 function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
   const suggestedActions = [
+ {
    
+    },
+
+    
   ];
 
   return (
