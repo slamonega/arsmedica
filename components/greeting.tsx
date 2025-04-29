@@ -31,21 +31,7 @@ export const Greeting = () => {
         transition={{ delay: 0.6 }}
         className="text-2xl text-zinc-500"
       >
- Ars Medica, through its advanced clinical intelligence, offers:
-
--Development of diagnostic hypotheses grounded in current evidence.
-
--Recommendation of pertinent complementary investigations.
-
--Proposal of therapeutic strategies aligned with clinical practice guidelines.
-
--Comprehensive assessment of risks, benefits, and management alternatives.
-
--Suggestion of referrals to subspecialties when clinically indicated.
-
--Critical synthesis of relevant scientific literature.
-
--Proactive detection of pharmacological interactions and safety alerts.
+Diagnosis, Workup, Risk–Benefit, Evidence, Guidelines, Treatment, Personalization, Interactions, Safety, Referral, Ethics, Context
       </motion.div>
     </div>
   );
