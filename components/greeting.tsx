@@ -32,7 +32,7 @@ export const Greeting = () => {
         className="text-2xl text-zinc-300"
       >
           
-Diagnosis, Workup, Risk–Benefit, Evidence, Guidelines, Treatment, Personalization, Interactions, Safety, Referral, Ethics, Context. CHAT. API. AGENTS.
+Diagnosis, Workup, Risk–Benefit, Evidence, Guidelines, Treatment, Personalization, Interactions, Safety, Referral, Ethics, Context.
       </motion.div>
     </div>
   );
