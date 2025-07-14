@@ -22,7 +22,7 @@ export const Greeting = () => {
         transition={{ delay: 0.6 }}
         className="text-2xl text-zinc-500"
       >
-     Community Healthcare
+     AI Community Healthcare
       </motion.div>      
             <motion.div
         initial={{ opacity: 0, y: 10 }}
