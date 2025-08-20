@@ -1,0 +1,134 @@
+# Informe de Funcionalidades del Sistema: Chat SDK
+
+## 1. Resumen General
+
+Este sistema es una aplicación de chatbot avanzada y de código abierto construida sobre un stack tecnológico moderno. La aplicación, denominada "Chat SDK", proporciona una plataforma robusta para crear potentes aplicaciones de chat impulsadas por inteligencia artificial. Su principal característica es una interfaz de chat dinámica que no solo permite conversaciones de texto, sino que también interactúa con un agente de IA capaz de realizar acciones complejas, como la generación de contenido estructurado (denominado "Artefactos") y el uso de herramientas para acceder a información externa.
+
+## 2. Funcionalidades Principales
+
+### a. Interfaz de Chat Inteligente
+El núcleo del sistema es una interfaz de chat moderna y responsiva. Los usuarios pueden mantener conversaciones fluidas con un asistente de IA. La interfaz soporta:
+- **Historial de Conversaciones:** Los chats se guardan y se pueden revisitar más tarde.
+- **Renderizado de Markdown:** Las respuestas del modelo pueden tener formato, incluyendo encabezados, listas, bloques de código, etc.
+- **Componentes de UI Generativa:** La interfaz puede renderizar dinámicamente componentes interactivos basados en la respuesta del modelo de IA.
+
+### b. Autenticación de Usuarios
+El sistema cuenta con un módulo de autenticación completo (`Auth.js`) que permite:
+- **Registro de nuevos usuarios.**
+- **Inicio de sesión** para usuarios existentes.
+- **Persistencia de la sesión de usuario** para asociar los historiales de chat y otros datos con usuarios específicos.
+
+### c. Generación de Artefactos
+Esta es una de las características más distintivas del sistema. Un "Artefacto" es un bloque de contenido estructurado y editable que la IA genera como respuesta a una solicitud del usuario. Los artefactos aparecen en un panel lateral junto al chat y permiten una interacción más rica que un simple mensaje de texto. Basado en las dependencias del proyecto, los tipos de artefactos soportados incluyen:
+- **Documentos de Texto:** Para solicitudes como "escríbeme un ensayo sobre...". El sistema crea un editor de texto enriquecido (usando ProseMirror).
+- **Código:** La IA puede generar fragmentos de código que se muestran en un editor especializado (usando CodeMirror) con resaltado de sintaxis.
+- **Hojas de Cálculo (Sheets):** Capacidad para generar y mostrar datos en formato de tabla o cuadrícula (usando `react-data-grid`).
+
+### d. Uso de Herramientas por parte de la IA
+El modelo de lenguaje subyacente puede utilizar un conjunto de herramientas predefinidas para realizar acciones y responder a las preguntas de los usuarios de manera más efectiva. Las herramientas identificadas son:
+- **`create-document`:** Crea un nuevo artefacto de tipo documento con el contenido solicitado.
+- **`update-document`:** Modifica el contenido de un artefacto de documento ya existente.
+- **`get-weather`:** Obtiene datos meteorológicos en tiempo real de una fuente externa para responder a preguntas como "¿qué tiempo hace en...?"
+- **`request-suggestions`:** La IA puede solicitar y mostrar sugerencias de acciones o preguntas de seguimiento para guiar al usuario.
+
+### e. Persistencia de Datos
+El sistema está configurado para almacenar datos de forma persistente:
+- **Base de Datos:** Utiliza Neon Serverless Postgres con el ORM Drizzle para guardar el historial de chats y los datos de los usuarios.
+- **Almacenamiento de Archivos:** Utiliza Vercel Blob para el almacenamiento eficiente de archivos que los usuarios puedan subir.
+
+### f. Selección de Modelos de IA
+La arquitectura (a través del AI SDK de Vercel) es agnóstica al modelo, lo que permite a los desarrolladores configurar y cambiar fácilmente entre diferentes proveedores de modelos de lenguaje (LLM), como xAI (el predeterminado), OpenAI, Anthropic, entre otros.
+
+## 3. Pila Tecnológica
+
+- **Framework Frontend/Backend:** Next.js (con App Router, React Server Components y Server Actions).
+- **Inteligencia Artificial:** Vercel AI SDK.
+- **Autenticación:** Auth.js (NextAuth v5).
+- **Base de Datos:** Neon Serverless Postgres.
+- **ORM:** Drizzle ORM.
+- **Almacenamiento de Archivos:** Vercel Blob.
+- **UI y Estilos:** shadcn/ui, Tailwind CSS, Radix UI.
+- **Editores de Artefactos:** CodeMirror (código), ProseMirror (texto), React Data Grid (hojas de cálculo).
+- **Testing End-to-End:** Playwright.
+- **Lenguaje:** TypeScript.
+
+## 4. Modificaciones Realizadas: Integración de OpenAI
+
+Se realizaron las siguientes modificaciones para cambiar el proveedor de modelos de IA de xAI (predeterminado) a OpenAI:
+
+1.  **Actualización del Proveedor de Modelos:** Se modificó el archivo `lib/ai/providers.ts` para importar y utilizar los modelos de OpenAI en lugar de los de xAI. Los modelos se mapearon de la siguiente manera:
+    -   **Modelo de Chat (`chat-model`):** `gpt-4-turbo`
+    -   **Modelo de Razonamiento (`chat-model-reasoning`):** `gpt-4o`
+    -   **Modelo de Título y Artefactos:** `gpt-4-turbo`
+    -   **Modelo de Imagen:** `dall-e-3`
+
+2.  **Configuración de API Key:** Se actualizó el archivo de ejemplo de variables de entorno (`.env.example`) para incluir la variable `OPENAI_API_KEY`, que es necesaria para autenticarse con la API de OpenAI.
+
+3.  **Próximos Pasos para el Usuario:** Para completar la configuración, el usuario debe realizar dos acciones:
+    -   **Instalar la dependencia de OpenAI:** Ejecutar el comando `pnpm install @ai-sdk/openai` en la raíz del proyecto.
+    -   **Configurar la API Key:** Crear un archivo `.env` (o usar las variables de entorno de Vercel) y añadir la `OPENAI_API_KEY` con su valor correspondiente.
+
+## 5. Funcionalidad Implementada: Selección de Especialidad Médica
+
+Esta sección describe la funcionalidad que permite al usuario seleccionar una especialidad médica para adaptar las respuestas del asistente de IA a un dominio específico.
+
+### a. Componente de Interfaz (Frontend)
+
+Se ha añadido un menú desplegable en la interfaz de chat (`components/chat.tsx`). Este menú permite al usuario seleccionar una de las siguientes especialidades:
+- Cardiología
+- Neurología
+- Pediatría
+- General
+
+La especialidad seleccionada se mantiene en el estado de la aplicación y se envía al backend con cada nuevo mensaje.
+
+### b. Lógica del Sistema (Backend y Lógica de IA)
+
+El sistema ahora utiliza la especialidad seleccionada para generar respuestas más precisas y contextualizadas.
+
+1.  **Envío de la Especialidad:** El componente de chat ahora incluye la especialidad seleccionada en el cuerpo de la solicitud (`body`) que se envía a la API del backend (`app/(chat)/api/chat/route.ts`).
+
+2.  **Modificación Dinámica del Prompt:** El backend recibe la especialidad y la utiliza para construir un prompt de sistema dinámico. Se ha creado una nueva función en `lib/ai/prompts.ts` que genera una instrucción específica para el modelo de IA, por ejemplo:
+
+    > "Eres un asistente médico experto. Debes actuar como un especialista en Cardiología. Todas tus respuestas, análisis y sugerencias deben estar estrictamente alineadas con el conocimiento, las guías clínicas y la perspectiva de un profesional en este campo."
+
+3.  **Respuesta Especializada:** El modelo de lenguaje (LLM) recibe este prompt contextualizado, lo que le permite generar respuestas enfocadas en la especialidad elegida, mejorando la relevancia y precisión del asesoramiento.
+
+### c. Beneficios
+
+- **Precisión y Relevancia:** Aumenta la probabilidad de que las respuestas sean médicamente relevantes y precisas.
+- **Seguridad:** Ayuda a reducir el riesgo de información genérica al limitar el alcance del conocimiento que el modelo utiliza.
+- **Escalabilidad:** Sienta las bases para futuras mejoras, como enrutar consultas a modelos de IA afinados para campos médicos específicos.
+
+## 6. Despliegue en Vercel
+
+Para desplegar esta aplicación en Vercel, se han realizado los siguientes ajustes y se deben seguir los siguientes pasos:
+
+1.  **Ajuste de Dependencias:** Se ha añadido la dependencia `@ai-sdk/openai` al archivo `package.json`. Esto es crucial para que el proceso de construcción de Vercel instale correctamente todos los módulos necesarios para la comunicación con la API de OpenAI.
+
+2.  **Actualización del Lockfile (Acción Requerida por el Usuario):** Antes de subir los cambios, es **imprescindible** que ejecute el siguiente comando en su terminal local para sincronizar el archivo `pnpm-lock.yaml` con los cambios en `package.json`:
+    ```bash
+    pnpm install
+    ```
+    Después de ejecutar el comando, debe confirmar (commit) y subir (push) el archivo `pnpm-lock.yaml` actualizado a su repositorio. **Si no se realiza este paso, el build en Vercel fallará.**
+
+3.  **Configuración de Variables de Entorno:** Es imprescindible configurar las siguientes variables de entorno en el panel de control de su proyecto de Vercel (Project Settings -> Environment Variables):
+    -   `OPENAI_API_KEY`: Su clave de API de OpenAI.
+    -   `AUTH_SECRET`: Un secreto de autenticación. Puede generar uno en `https://generate-secret.vercel.app/32`.
+    -   `BLOB_READ_WRITE_TOKEN`: El token para Vercel Blob Storage.
+    -   `POSTGRES_URL`: La URL de conexión a su base de datos de Vercel Postgres.
+
+Una vez que el repositorio se suba a GitHub (o un proveedor similar) con el `pnpm-lock.yaml` actualizado y las variables de entorno configuradas, el despliegue debería realizarse de forma automática y exitosa.
+
+## 7. Archivos Modificados
+
+A continuación se presenta la lista de todos los archivos que fueron creados o modificados durante esta sesión:
+
+- `informe.txt` (este archivo)
+- `package.json`
+- `.env.example`
+- `lib/ai/providers.ts`
+- `lib/ai/prompts.ts`
+- `components/chat.tsx`
+- `app/(chat)/api/chat/route.ts`
+- `app/(chat)/api/chat/schema.ts`
