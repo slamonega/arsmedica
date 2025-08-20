@@ -40,7 +40,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { id, message, selectedChatModel, specialty } = requestBody;
+    const { id, message, selectedChatModel } = requestBody;
 
     const session = await auth();
 
@@ -103,7 +103,7 @@ export async function POST(request: Request) {
       execute: (dataStream) => {
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
-          system: systemPrompt({ selectedChatModel, specialty }),
+          system: systemPrompt({ selectedChatModel }),
           messages,
           maxSteps: 5,
           experimental_activeTools:
