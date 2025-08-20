@@ -4,10 +4,10 @@ import {
   createDataStreamResponse,
   smoothStream,
   streamText,
+  type UIMessage,
 } from 'ai';
 import { auth, type UserType } from '@/app/(auth)/auth';
-import type { UIMessage } from 'ai';
-import { medicalSystemPrompt } from '@/lib/ai/prompts';
+import { systemPrompt } from '@/lib/ai/prompts';
 import {
   deleteChatById,
   getChatById,
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
     const messages = appendClientMessage({
       // @ts-expect-error: todo add type conversion from DBMessage[] to UIMessage[]
       messages: previousMessages,
-      message,
+      message: message as UIMessage,
     });
 
     await saveMessages({
@@ -140,7 +140,7 @@ export async function POST(request: Request) {
                 }
 
                 const [, assistantMessage] = appendResponseMessages({
-                  messages: [message],
+                  messages: [message as UIMessage],
                   responseMessages: response.messages,
                 });
 
