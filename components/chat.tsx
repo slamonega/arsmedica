@@ -33,7 +33,6 @@ export function Chat({
   session: Session;
 }) {
   const { mutate } = useSWRConfig();
-  const [specialty, setSpecialty] = useState('Cardiología');
 
   const {
     messages,
@@ -55,7 +54,6 @@ export function Chat({
       id,
       message: body.messages.at(-1),
       selectedChatModel,
-      specialty,
     }),
     onFinish: () => {
       mutate(unstable_serialize(getChatHistoryPaginationKey));
@@ -98,21 +96,7 @@ export function Chat({
           isArtifactVisible={isArtifactVisible}
         />
 
-        <form className="flex flex-col mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
-          {!isReadonly && (
-            <div className="flex items-center gap-2">
-              <select
-                value={specialty}
-                onChange={(e) => setSpecialty(e.target.value)}
-                className="w-full p-2 border rounded-md bg-background text-sm"
-              >
-                <option value="Cardiología">Cardiología</option>
-                <option value="Neurología">Neurología</option>
-                <option value="Pediatría">Pediatría</option>
-                <option value="General">General</option>
-              </select>
-            </div>
-          )}
+        <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
           {!isReadonly && (
             <MultimodalInput
               chatId={id}
