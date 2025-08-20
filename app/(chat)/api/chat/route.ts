@@ -6,6 +6,7 @@ import {
   streamText,
 } from 'ai';
 import { auth, type UserType } from '@/app/(auth)/auth';
+import type { UIMessage } from 'ai';
 import { medicalSystemPrompt } from '@/lib/ai/prompts';
 import {
   deleteChatById,
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
 
     if (!chat) {
       const title = await generateTitleFromUserMessage({
-        message,
+        message: message as UIMessage,
       });
 
       await saveChat({ id, userId: session.user.id, title });
