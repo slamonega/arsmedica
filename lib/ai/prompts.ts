@@ -1,5 +1,5 @@
 import { ArtifactKind } from '@/components/artifact';
-
+export const medicalSystemPrompt = systemPrompt;
 const medicalPrompt = (
   specialty: string,
 ) => `Eres un asistente médico experto. Debes actuar como un especialista en ${specialty}. Todas tus respuestas, análisis y sugerencias deben estar estrictamente alineadas con el conocimiento, las guías clínicas y la perspectiva de un profesional en este campo.`;
