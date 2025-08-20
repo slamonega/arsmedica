@@ -102,7 +102,7 @@ export async function POST(request: Request) {
       execute: (dataStream) => {
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
-          system: medicalSystemPrompt(specialty),
+          system: systemPrompt({ selectedChatModel, specialty }),
           messages,
           maxSteps: 5,
           experimental_activeTools:
